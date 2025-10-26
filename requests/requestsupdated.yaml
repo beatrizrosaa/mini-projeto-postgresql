@@ -1,0 +1,258 @@
+_type: export
+__export_format: 4
+__export_date: 2025-10-24T11:14:00.000Z
+__export_source: insomnia.desktop.app:v2023.5.8
+resources:
+  # O Workspace (O projeto)
+  - _id: wrk_1
+    _type: workspace
+    name: Mini-Projeto API POSTGRESQL(Auth + Contacts)
+    description: ""
+    scope: collection
+
+  # O Ambiente (Variáveis)
+  - _id: env_1
+    _type: environment
+    parentId: wrk_1
+    name: Base Environment
+    data:
+      # Corrigimos a base_url para incluir o prefixo /api que definimos
+      base_url: http://localhost:3001/api
+      # Variável para armazenar o ID de um contato criado
+      contact_id: ""
+    dataPropertyOrder:
+      "&":
+        - base_url
+        - contact_id
+
+  # ===============================================
+  # Pasta 1: Autenticação (Rotas Corrigidas)
+  # ===============================================
+  - _id: grp_auth
+    _type: request_group
+    parentId: wrk_1
+    name: 1. Autenticação
+
+  - _id: req_register_ok
+    _type: request
+    parentId: grp_auth
+    name: Register - Sucesso
+    method: POST
+    # Corrigido: /api/auth/register
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Bia Teste",
+          "email": "bia.teste@example.com",
+          "password": "Password123"
+        }
+
+  - _id: req_register_email_duplicado
+    _type: request
+    parentId: grp_auth
+    name: Register - Erro (Email Repetido)
+    method: POST
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Bia Teste 2",
+          "email": "bia.teste@example.com",
+          "password": "Password123"
+        }
+
+  - _id: req_login_ok
+    _type: request
+    parentId: grp_auth
+    name: Login - Sucesso
+    method: POST
+    # Corrigido: /api/auth/login
+    url: "{{ _.base_url }}/auth/login"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "bia.teste@example.com",
+          "password": "Password123"
+        }
+
+  - _id: req_login_senha_errada
+    _type: request
+    parentId: grp_auth
+    name: Login - Erro (Senha Inválida)
+    method: POST
+    url: "{{ _.base_url }}/auth/login"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "bia.teste@example.com",
+          "password": "password_errado"
+        }
+
+  # ===============================================
+  # Pasta 2: Contatos (CRUD)
+  # ===============================================
+  - _id: grp_contacts
+    _type: request_group
+    parentId: wrk_1
+    name: 2. Contatos (CRUD)
+
+  - _id: req_contact_create_ok
+    _type: request
+    parentId: grp_contacts
+    name: Create - Sucesso
+    method: POST
+    url: "{{ _.base_url }}/contacts"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Primeiro Contato",
+          "email": "primeiro@contato.com",
+          "phone": "11999998888"
+        }
+    authentication:
+      type: bearer
+      # Pega o token automaticamente da requisição "Login - Sucesso"
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  - _id: req_contact_create_mal_formatado
+    _type: request
+    parentId: grp_contacts
+    name: Create - Erro (Mal Formatado)
+    method: POST
+    url: "{{ _.base_url }}/contacts"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Contato Sem Telefone"
+        }
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  - _id: req_contact_get_all
+    _type: request
+    parentId: grp_contacts
+    name: List All (GET)
+    method: GET
+    url: "{{ _.base_url }}/contacts"
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  - _id: req_contact_get_filtered
+    _type: request
+    parentId: grp_contacts
+    name: List Filtered (GET ?name=...)
+    method: GET
+    url: "{{ _.base_url }}/contacts?name=Primeiro"
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  - _id: req_contact_get_by_id
+    _type: request
+    parentId: grp_contacts
+    name: Get by ID
+    method: GET
+    # Pega o _id do contato criado na requisição "Create - Sucesso"
+    url: "{{ _.base_url }}/contacts/{% response 'body', 'req_contact_create_ok', 'b64::JC5faWQ=::46b', 'never', 60 %}"
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  - _id: req_contact_update_put
+    _type: request
+    parentId: grp_contacts
+    name: Update (PUT)
+    method: PUT
+    url: "{{ _.base_url }}/contacts/{% response 'body', 'req_contact_create_ok', 'b64::JC5faWQ=::46b', 'never', 60 %}"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Contato (Atualizado-PUT)",
+          "phone": "22888887777"
+        }
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  - _id: req_contact_update_patch
+    _type: request
+    parentId: grp_contacts
+    name: Update (PATCH)
+    method: PATCH
+    url: "{{ _.base_url }}/contacts/{% response 'body', 'req_contact_create_ok', 'b64::JC5faWQ=::46b', 'never', 60 %}"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "novo-email-patch@contato.com"
+        }
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  - _id: req_contact_delete
+    _type: request
+    parentId: grp_contacts
+    name: Delete
+    method: DELETE
+    url: "{{ _.base_url }}/contacts/{% response 'body', 'req_contact_create_ok', 'b64::JC5faWQ=::46b', 'never', 60 %}"
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  # ===============================================
+  # Pasta 3: Casos de Erro (Segurança)
+  # ===============================================
+  - _id: grp_errors
+    _type: request_group
+    parentId: wrk_1
+    name: 3. Erros de Segurança
+
+  - _id: req_error_sem_token
+    _type: request
+    parentId: grp_errors
+    name: Erro - Sem Token
+    method: GET
+    url: "{{ _.base_url }}/contacts"
+    authentication: {}
+
+  - _id: req_error_token_invalido
+    _type: request
+    parentId: grp_errors
+    name: Erro - Token Inválido
+    method: GET
+    url: "{{ _.base_url }}/contacts"
+    authentication:
+      type: bearer
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.falso.falso"
+
+  - _id: req_error_not_found
+    _type: request
+    parentId: grp_errors
+    name: Erro - Acesso (ID Não Encontrado)
+    method: GET
+    url: "{{ _.base_url }}/contacts/667c48f214f4f4f4f4f4f4f4"
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+
+  - _id: req_error_acesso_indevido
+    _type: request
+    parentId: grp_errors
+    name: Erro - Acesso (ID de Outro Usuário)
+    method: GET
+    url: "{{ _.base_url }}/contacts/{% response 'body', 'req_contact_create_ok', 'b64::JC5faWQ=::46b', 'never', 60 %}"
+    description: "[SIMULADO] Para testar, troque o token por um token de OUTRO usuário."
+    authentication:
+      type: bearer
+      token: "[COLE O TOKEN DE OUTRO USUÁRIO AQUI]"

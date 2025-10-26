@@ -1,0 +1,127 @@
+# requests/requests.yaml
+_type: export
+__export_format: 4
+__export_date: 2025-10-15T13:30:00.000Z
+__export_source: insomnia.desktop.app:v2023.5.8
+resources:
+  - _id: wrk_1
+    _type: workspace
+    name: API Auth JWT
+    description: ""
+    scope: collection
+  - _id: env_1
+    _type: environment
+    parentId: wrk_1
+    name: Base Environment
+    data:
+      base_url: http://localhost:3000
+      jwt_token: ""
+    dataPropertyOrder:
+      "&":
+        - base_url
+        - jwt_token
+  - _id: req_register_ok
+    _type: request
+    parentId: wrk_1
+    name: Register - Sucesso
+    method: POST
+    url: "{{ _.base_url }}/register"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Bia Teste",
+          "email": "bia.teste@example.com",
+          "password": "Password123"
+        }
+  - _id: req_register_email_duplicado
+    _type: request
+    parentId: wrk_1
+    name: Register - Erro (Email Repetido)
+    method: POST
+    url: "{{ _.base_url }}/register"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Bia Teste 2",
+          "email": "bia.teste@example.com",
+          "password": "Password123"
+        }
+  - _id: req_register_mal_formatado
+    _type: request
+    parentId: wrk_1
+    name: Register - Erro (Mal Formatado)
+    method: POST
+    url: "{{ _.base_url }}/register"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Bia Teste 3",
+          "email": "bia.teste3@example.com"
+        }
+  - _id: req_login_ok
+    _type: request
+    parentId: wrk_1
+    name: Login - Sucesso
+    method: POST
+    url: "{{ _.base_url }}/login"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "bia.teste@example.com",
+          "password": "Password123"
+        }
+  - _id: req_login_senha_errada
+    _type: request
+    parentId: wrk_1
+    name: Login - Erro (Senha Inválida)
+    method: POST
+    url: "{{ _.base_url }}/login"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "bia.teste@example.com",
+          "password": "password_errado"
+        }
+  - _id: req_login_email_invalido
+    _type: request
+    parentId: wrk_1
+    name: Login - Erro (Email Inválido)
+    method: POST
+    url: "{{ _.base_url }}/login"
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "nao.existe@example.com",
+          "password": "Password123"
+        }
+  - _id: req_protected_ok
+    _type: request
+    parentId: wrk_1
+    name: Protected - Acesso Válido
+    method: GET
+    url: "{{ _.base_url }}/protected"
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_login_ok', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+  - _id: req_protected_sem_token
+    _type: request
+    parentId: wrk_1
+    name: Protected - Erro (Sem Token)
+    method: GET
+    url: "{{ _.base_url }}/protected"
+    authentication: {}
+  - _id: req_protected_token_invalido
+    _type: request
+    parentId: wrk_1
+    name: Protected - Erro (Token Inválido)
+    method: GET
+    url: "{{ _.base_url }}/protected"
+    authentication:
+      type: bearer
+      token: "um.token.falso"

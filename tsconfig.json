@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2020", // Atualizei para uma versão mais moderna do ECMAScript
+    "module": "commonjs",
+    "moduleResolution": "node", // Adicionado para clareza
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "sourceMap": true, // Adicionado para melhor debugging
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"] // Adicionado para focar o compilador
+}
