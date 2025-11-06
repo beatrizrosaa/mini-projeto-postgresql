@@ -1,8 +1,12 @@
 import { Request, Response } from 'express';
 import ContactService from '../services/ContactService';
-import { Prisma } from '@prisma/client';
+// import { Prisma } from '@prisma/client';
 import prisma from '../lib/prisma';
+import { PrismaClientKnownRequestError} from '@prisma/client/runtime/library';
 
+// Se a linha acima der erro, use a importação padrão da lib
+// (às vezes o Vercel se confunde com 'runtime/library')
+// import { Prisma, PrismaClient, PrismaClientKnownRequestError } from '@prisma/client';
 // Interface customizada para o Request, para "lembrar" o TypeScript que temos o req.userId
 interface AuthRequest extends Request {
   userId?: string; // Adicionamos o userId como opcional
@@ -20,7 +24,7 @@ class ContactController {
       return res.status(201).json(contact); // 201 Created
     } catch (error: any) {
       // Se o erro for de validação do Prisma (ex: campo 'name' faltando)
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         return res.status(400).json({ message: 'Dados inválidos.', details: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -66,7 +70,7 @@ class ContactController {
       return res.status(200).json(contact);
     } catch (error: any) {
       // Se o ID for inválido (ex: "123") o Prisma dá um erro
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         return res.status(400).json({ message: 'ID do contato inválido.' });
       }
       return res.status(500).json({ message: error.message });
@@ -93,10 +97,10 @@ class ContactController {
 
       return res.status(200).json(updatedContact);
     } catch (error: any) {
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         return res.status(400).json({ message: 'ID do contato inválido.' });
       }
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         return res.status(400).json({ message: 'Dados inválidos.', details: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -123,10 +127,10 @@ class ContactController {
 
       return res.status(200).json(updatedContact);
     } catch (error: any) {
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         return res.status(400).json({ message: 'ID do contato inválido.' });
       }
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         return res.status(400).json({ message: 'Dados inválidos.', details: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -154,7 +158,7 @@ class ContactController {
       // 204 No Content é a resposta padrão para um DELETE bem-sucedido
       return res.status(204).send();
     } catch (error: any) {
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         return res.status(400).json({ message: 'ID do contato inválido.' });
       }
       return res.status(500).json({ message: error.message });
