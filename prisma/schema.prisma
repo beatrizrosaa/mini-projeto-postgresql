@@ -4,7 +4,7 @@
 // 1. Configuração do Cliente (Gera o código TypeScript)
 generator client {
   provider = "prisma-client-js"
-  output   = "./node_modules/@prisma/client"
+  output   = "../node_modules/@prisma/client"
 }
 
 // 2. Configuração do Banco (Lê o .env)
@@ -33,14 +33,14 @@ model User {
 }
 
 // Nosso ContactModel "traduzido"
-model contact {
+model Contact {
   id        String   @id @default(cuid())
   name      String
   email     String?  // O '?' significa que este campo é opcional
   phone     String
 
   // A Relação: Este Contato pertence a UM Usuário
-  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   // Chave estrangeira que armazena o 'id' do Usuário
 
   createdAt DateTime @default(now())
