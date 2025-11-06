@@ -4,6 +4,7 @@
 // 1. Configuração do Cliente (Gera o código TypeScript)
 generator client {
   provider = "prisma-client-js"
+  output   = "./node_modules/@prisma/client"
 }
 
 // 2. Configuração do Banco (Lê o .env)
