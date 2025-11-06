@@ -6,7 +6,7 @@ generator client {
   provider      = "prisma-client-js"
   
   // O Remédio para o Build: (NÃO ADIVINHE, SALVE AQUI!)
-  output        = "../node_modules/@prisma/client"
+  output        = "../node_modules/.prisma/client"
       
   // O Remédio para o Runtime: (NÃO ADIVINHE, USE ESTE MOTOR!)
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
