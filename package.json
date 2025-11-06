@@ -7,7 +7,7 @@
   "scripts": {
     "start": "NODE_ENV=production node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "npx prisma generate --schema=../prisma/schema.prisma && npx prisma migrate deploy --schema=../prisma/schema.prisma && tsc",
+    "build": "npx prisma migrate deploy && tsc",
     "prisma": "env-cmd -f .env prisma"
   },
 
