@@ -1,6 +1,5 @@
 // src/index.ts
 import express from 'express';
-import 'dotenv/config';
 import routes from './routes';
 import cors from 'cors';
 
