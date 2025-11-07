@@ -3,8 +3,11 @@ import { PrismaClient } from '@prisma/client';
 
 // Cria uma instância global única do Prisma Client
 const prisma = new PrismaClient({
-  // Opcional: Adiciona log para vermos as queries no terminal
-  log: ['query', 'info', 'warn', 'error'],
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
 });
 
 export default prisma;
