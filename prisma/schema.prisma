@@ -3,52 +3,49 @@
 
 // 1. Configuração do Cliente (Gera o código TypeScript)
 generator client {
-  provider      = "prisma-client-js"
-  
-  // O Remédio para o Build: (NÃO ADIVINHE, SALVE AQUI!)
-  output        = "../node_modules/.prisma/client"
-      
-  // O Remédio para o Runtime: (NÃO ADIVINHE, USE ESTE MOTOR!)
-  binaryTargets = ["native", "rhel-openssl-1.0.x"]
-}
-// 2. Configuração do Banco (Lê o .env)
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+provider = "prisma-client-js"
+
+// Esta linha é crucial para o Vercel
+binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
+// 2. Configuração do Banco (Lê o .env)
+datasource db {
+provider = "postgresql"
+url      = env("DATABASE_URL")
+}
 
 // --- 3. Modelos da Aplicação ---
 
 // Nosso UserModel "traduzido"
 model User {
-  id        String   @id @default(cuid()) // Chave primária (substituto do _id)
-  email     String   @unique
-  name      String
-  password  String
+id        String    @id @default(cuid()) // Chave primária
+email     String    @unique
+name      String
+password  String
 
-  // A Relação: Um Usuário pode ter MUITOS Contatos
-  contacts  Contact[]
+// A Relação: Um Usuário pode ter MUITOS Contatos
+contacts  Contact[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+createdAt DateTime  @default(now())
+updatedAt DateTime  @updatedAt
 
-  @@map("users") // Nome da tabela no Postgres (boa prática)
+@@map("users") // Nome da tabela no Postgres
 }
 
 // Nosso ContactModel "traduzido"
 model Contact {
-  id        String   @id @default(cuid())
-  name      String
-  email     String?  // O '?' significa que este campo é opcional
-  phone     String
+id        String    @id @default(cuid())
+name      String
+email     String?   // O '?' significa que este campo é opcional
+phone     String
 
-  // A Relação: Este Contato pertence a UM Usuário
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String   // Chave estrangeira que armazena o 'id' do Usuário
+// A Relação: Este Contato pertence a UM Usuário
+user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+userId    String    // Chave estrangeira que armazena o 'id' do Usuário
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+createdAt DateTime  @default(now())
+updatedAt DateTime  @updatedAt
 
-  @@map("contacts") // Nome da tabela no Postgres
+@@map("contacts") // Nome da tabela no Postgres
 }
