@@ -6,16 +6,8 @@ import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const allowedOrigins = [
-  'https://frontend-mini-projeto-dv1k.vercel.app', // <-- A URL do seu frontend (do log de erro)
-  'http://localhost:5173'                         // <-- A URL do seu frontend local
-];
-
 // Middleware para parsear o corpo das requisições como JSON
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
-}));
+app.use(cors());
 app.use(express.json());
 
 // Conectar ao banco de dados
