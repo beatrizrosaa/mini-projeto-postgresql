@@ -8,7 +8,7 @@
     "postinstall": "prisma generate",
     "start": "NODE_ENV=production node dist/index.js",
     "dev": "env-cmd -f .env ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "npx prisma migrate deploy && tsc",
+    "build": "npx prisma db push && tsc",
     "prisma": "env-cmd -f .env prisma"
   },
 
