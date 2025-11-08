@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // Conectar ao banco de dados
-
+//teste
 
 // Usar as rotas
 app.use('/api', routes);
