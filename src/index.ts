@@ -7,7 +7,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware para parsear o corpo das requisições como JSON
-app.use(cors());
+app.use(cors({
+  
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
+}));
 app.use(express.json());
 
 // Conectar ao banco de dados
