@@ -70,9 +70,10 @@ class AuthService {
     // 3. (Tradução) Gera o token
     // PONTO CRÍTICO: No Mongoose era user._id, no Prisma é user.id
     const token = jwt.sign(
-      { id: user.id }, // <-- MUDANÇA IMPORTANTE
+      { id: user.id }, // <-- MUDANÇA IMPORTANTE difvdo
       process.env.JWT_SECRET!,
-      { expiresIn: Number(process.env.JWT_EXPIRES_IN) || 1024 * 60 * 60 }
+      
+      { expiresIn: Number(process.env.JWT_EXPIRES_IN) || '1h' }
     );
 
     return { token };
